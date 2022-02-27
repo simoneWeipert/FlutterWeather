@@ -46,6 +46,7 @@ class _MyHomePageState extends State<MyHomePage> with TickerProviderStateMixin {
   List<WeatherResponse> _forecast = [];
   int _selectedIndex = 0;
   Card weatherCard = const Card();
+  bool _visibleController = false;
 
   Widget _buildChips() {
     List<Widget> chips = [];
@@ -87,29 +88,29 @@ class _MyHomePageState extends State<MyHomePage> with TickerProviderStateMixin {
         children: [
           Row(
             children: [
-              Container(
-                height: 150,
-                width: MediaQuery.of(context).size.width * 0.4,
-                alignment: Alignment.center,
-                child: Text(
-                  _forecast[index].tempInfo.temperature.toString() + ' °C',
-                  style: Theme.of(context).textTheme.headline4,
-                ),
+              Expanded(
+                flex: 4,
+                child: Container(
+                    alignment: Alignment.center,
+                    child: Text(
+                      _forecast[index].tempInfo.temperature.toString() + ' °C',
+                      style: Theme.of(context).textTheme.headline4,
+                    )),
               ),
-              Container(
-                  width: MediaQuery.of(context).size.width * 0.5,
-                  height: 150,
-                  alignment: Alignment.center,
-                  child: Column(
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    children: [
-                      Image.network(_forecast[index].iconUrl),
-                      Text(
-                        _forecast[index].weatherInfo.description,
-                        style: Theme.of(context).textTheme.headline5,
-                      )
-                    ],
-                  ))
+              Expanded(
+                  flex: 4,
+                  child: Container(
+                      alignment: Alignment.center,
+                      child: Column(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: [
+                          Image.network(_forecast[index].iconUrl),
+                          Text(
+                            _forecast[index].weatherInfo.description,
+                            style: Theme.of(context).textTheme.headline5,
+                          )
+                        ],
+                      )))
             ],
           ),
           Container(
@@ -201,7 +202,8 @@ class _MyHomePageState extends State<MyHomePage> with TickerProviderStateMixin {
                           const BoxConstraints(maxWidth: 500, minHeight: 300),
                       width: MediaQuery.of(context).size.width,
                       height: 300,
-                      child: weatherCard,
+                      child: Visibility(
+                          visible: _visibleController, child: weatherCard),
                     ))
                 //Main weather display container
               ],
@@ -217,6 +219,7 @@ class _MyHomePageState extends State<MyHomePage> with TickerProviderStateMixin {
     final forecast = await _dataService.getWeatherForecast(myController.text);
     setState(() => _forecast = forecast);
     //auto generate a card for today
+    _visibleController = true;
     makeCard(0);
   }
 }
